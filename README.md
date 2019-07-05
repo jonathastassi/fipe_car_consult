@@ -1,6 +1,11 @@
-# fipe_car_consult
+# Fipe Car Consult
 
-A new Flutter application.
+Projeto desenvolvido em Flutter, com objetivo de buscar dados de veículos na tabela FIPE usando a API do https://deividfortuna.github.io/fipe/.
+
+- Requisições para API
+- Persistência dos veículos favoritos
+
+<img alt="Demonstração da aplicação" src="https://github.com/jonathastassi/fipe_car_consult/blob/master/screens/fipe_car_consult.gif" width="300">
 
 ## Getting Started
 
