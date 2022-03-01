@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.fipe_car_consult">
    <application
-        android:label="fipe_car_consult"
+        android:label="Carros na Fipe"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
