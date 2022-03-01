@@ -1,20 +1,20 @@
 import 'dart:convert';
 
+import 'package:fipe_car_consult/src/features/favorite_cars/presenter/widgets/favorite_cars_drawer.dart';
+import 'package:fipe_car_consult/src/features/home/presenter/widgets/app_card.dart';
+import 'package:fipe_car_consult/src/features/home/presenter/widgets/app_loading_line.dart';
 import 'package:flutter/material.dart';
-import 'package:fipe_car_consult/ui/drawer/favorite.drawer.dart';
-import 'package:fipe_car_consult/ui/components/card.component.dart';
-import 'package:fipe_car_consult/ui/components/loading_line.component.dart';
 
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as Http;
 
-class Home extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _HomeState extends State<Home> {
+class _HomePageState extends State<HomePage> {
   List _brands = [];
   List _models = [];
   List _years = [];
@@ -37,8 +37,8 @@ class _HomeState extends State<Home> {
   String _selectedValueYear = '';
 
   Future<List> _getBrands() async {
-    Http.Response response =
-        await Http.get(Uri.parse("https://parallelum.com.br/fipe/api/v1/carros/marcas"));
+    Http.Response response = await Http.get(
+        Uri.parse("https://parallelum.com.br/fipe/api/v1/carros/marcas"));
 
     List _data = [];
     _data = json.decode(response.body);
@@ -75,8 +75,8 @@ class _HomeState extends State<Home> {
       _showCard = false;
     });
 
-    Http.Response response = await Http.get(
-        Uri.parse("https://parallelum.com.br/fipe/api/v1/carros/marcas/$_selectedValueBrand/modelos"));
+    Http.Response response = await Http.get(Uri.parse(
+        "https://parallelum.com.br/fipe/api/v1/carros/marcas/$_selectedValueBrand/modelos"));
 
     List _data = [];
     _data = json.decode(response.body)["modelos"];
@@ -109,8 +109,8 @@ class _HomeState extends State<Home> {
       _showCard = false;
     });
 
-    Http.Response response = await Http.get(
-        Uri.parse("https://parallelum.com.br/fipe/api/v1/carros/marcas/$_selectedValueBrand/modelos/$_selectedValueModel/anos"));
+    Http.Response response = await Http.get(Uri.parse(
+        "https://parallelum.com.br/fipe/api/v1/carros/marcas/$_selectedValueBrand/modelos/$_selectedValueModel/anos"));
 
     List _data = [];
     _data = json.decode(response.body);
@@ -133,8 +133,8 @@ class _HomeState extends State<Home> {
       return <String, dynamic>{};
     }
 
-    Http.Response response = await Http.get(
-        Uri.parse("https://parallelum.com.br/fipe/api/v1/carros/marcas/$_selectedValueBrand/modelos/$_selectedValueModel/anos/$_selectedValueYear"));
+    Http.Response response = await Http.get(Uri.parse(
+        "https://parallelum.com.br/fipe/api/v1/carros/marcas/$_selectedValueBrand/modelos/$_selectedValueModel/anos/$_selectedValueYear"));
 
     return json.decode(response.body);
   }
@@ -274,7 +274,7 @@ class _HomeState extends State<Home> {
         }).toList(),
       );
     }
-    return LoadingLine();
+    return const AppLoadingLine();
   }
 
   @override
@@ -293,116 +293,120 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      endDrawer: FavoriteDrawer(favoriteList, _removeFavorite),
+      endDrawer: FavoriteCarsDrawer(
+        favoriteList: favoriteList,
+        removeFavorite: _removeFavorite,
+      ),
       body: SingleChildScrollView(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 18.0,
-                    ),
-                    child: const Text(
-                      "Pesquise o carro desejado",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 18.0,
+                  ),
+                  child: const Text(
+                    "Pesquise o carro desejado",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 15.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        const Text("Selecione a marca"),
-                        dropDownLineItem(
-                            loadingBrand, _selectedValueBrand, _brands,
-                            (newValue) {
-                          _getModels(newValue.toString()).then((data) {
-                            setState(() {
-                              loadingModel = false;
-                              _models = data;
-                            });
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      const Text("Selecione a marca"),
+                      dropDownLineItem(
+                          loadingBrand, _selectedValueBrand, _brands,
+                          (newValue) {
+                        _getModels(newValue.toString()).then((data) {
+                          setState(() {
+                            loadingModel = false;
+                            _models = data;
                           });
-                        }),
-                      ],
-                    ),
+                        });
+                      }),
+                    ],
                   ),
-                  (_models.isEmpty &&
-                          _selectedValueModel == "" &&
-                          loadingModel == false
-                      ? Container()
-                      : Padding(
-                          padding: const EdgeInsets.only(bottom: 15.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              const Text("Selecione o modelo"),
-                              dropDownLineItem(
-                                  loadingModel, _selectedValueModel, _models,
-                                  (newValue) {
-                                _getYears(newValue.toString()).then((data) {
-                                  setState(() {
-                                    loadingYear = false;
-                                    _years = data;
-                                  });
+                ),
+                (_models.isEmpty &&
+                        _selectedValueModel == "" &&
+                        loadingModel == false
+                    ? Container()
+                    : Padding(
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            const Text("Selecione o modelo"),
+                            dropDownLineItem(
+                                loadingModel, _selectedValueModel, _models,
+                                (newValue) {
+                              _getYears(newValue.toString()).then((data) {
+                                setState(() {
+                                  loadingYear = false;
+                                  _years = data;
                                 });
-                              }),
-                            ],
-                          ),
-                        )),
-                  (_years.isEmpty &&
-                          _selectedValueYear == "" &&
-                          loadingYear == false
-                      ? Container()
-                      : Padding(
-                          padding: const EdgeInsets.only(bottom: 15.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              const Text("Selecione o ano"),
-                              dropDownLineItem(
-                                  loadingYear, _selectedValueYear, _years,
-                                  (newValue) {
-                                _getDataCard(newValue.toString()).then((data) {
-                                  _dataCard = data;
+                              });
+                            }),
+                          ],
+                        ),
+                      )),
+                (_years.isEmpty &&
+                        _selectedValueYear == "" &&
+                        loadingYear == false
+                    ? Container()
+                    : Padding(
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            const Text("Selecione o ano"),
+                            dropDownLineItem(
+                                loadingYear, _selectedValueYear, _years,
+                                (newValue) {
+                              _getDataCard(newValue.toString()).then((data) {
+                                _dataCard = data;
 
-                                  setState(() {
-                                    if (_dataCard.containsKey('Marca') &&
-                                        _dataCard['Marca'] != '') {
-                                      _showCard = true;
-                                      loadingCard = false;
-                                    }
-                                  });
+                                setState(() {
+                                  if (_dataCard.containsKey('Marca') &&
+                                      _dataCard['Marca'] != '') {
+                                    _showCard = true;
+                                    loadingCard = false;
+                                  }
                                 });
-                              }),
-                            ],
-                          ),
-                        )),
-                ],
-              ),
-              loadingCard
-                  ? LoadingLine()
-                  : _showCard
-                      ? CardComponent(
-                          _dataCard['Marca'] ?? "",
-                          _dataCard['Modelo'] ?? "",
-                          _dataCard['Combustivel'] ?? "",
-                          _dataCard['AnoModelo'].toString() ?? "",
-                          _dataCard['CodigoFipe'] ?? "",
-                          _dataCard['Valor'] ?? "",
-                          _dataCard['MesReferencia'] ?? "",
-                          _setFavoriteCar,
-                          _isFavoriteCar,
-                        )
-                      : Container()
-            ],
-          )),
+                              });
+                            }),
+                          ],
+                        ),
+                      )),
+              ],
+            ),
+            loadingCard
+                ? const AppLoadingLine()
+                : _showCard
+                    ? AppCard(
+                        brand: _dataCard['Marca'] ?? "",
+                        model: _dataCard['Modelo'] ?? "",
+                        fuel: _dataCard['Combustivel'] ?? "",
+                        year: _dataCard['AnoModelo'].toString(),
+                        fipeCode: _dataCard['CodigoFipe'] ?? "",
+                        value: _dataCard['Valor'] ?? "",
+                        mesRef: _dataCard['MesReferencia'] ?? "",
+                        isFavoriteCar: _isFavoriteCar,
+                        setFavoriteCar: _setFavoriteCar,
+                      )
+                    : Container()
+          ],
+        ),
+      ),
     );
   }
 }

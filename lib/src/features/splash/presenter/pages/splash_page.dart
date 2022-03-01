@@ -1,4 +1,4 @@
-import 'package:fipe_car_consult/ui/pages/Home.page.dart';
+import 'package:fipe_car_consult/src/features/home/presenter/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
@@ -15,7 +15,7 @@ class _SplashPageState extends State<SplashPage> {
       (_) => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => Home(),
+          builder: (_) => HomePage(),
         ),
       ),
     );
