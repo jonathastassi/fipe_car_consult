@@ -5,7 +5,7 @@ Projeto desenvolvido em Flutter, com objetivo de buscar dados de veículos na ta
 - Requisições para API
 - Persistência dos veículos favoritos
 
-<img alt="Demonstração da aplicação" src="https://github.com/jonathastassi/fipe_car_consult/blob/master/screens/fipe_car_consult.gif" width="300">
+<img alt="Demonstração da aplicação" src="https://github.com/jonathastassi/fipe_car_consult/blob/main/screens/fipe_car_consult.gif" width="300">
 
 ## Getting Started
 
