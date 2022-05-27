@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fipe_car_api/src/fipe_car_api_exceptions.dart';
 import 'package:fipe_car_api/src/models/models.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,39 +13,83 @@ class FipeCarApiClient {
   static const String baseUrl = 'parallelum.com.br';
 
   Future<List<BrandModel>> getBrands() async {
-    http.Response response =
-        await _httpClient.get(Uri.https(baseUrl, '/fipe/api/v1/carros/marcas'));
+    try {
+      http.Response response = await _httpClient
+          .get(Uri.https(baseUrl, '/fipe/api/v1/carros/marcas'));
 
-    final brands = json.decode(response.body) as List;
+      if (response.statusCode != 200) {
+        throw GetBrandsFailure();
+      }
 
-    return brands.map((brand) => BrandModel.fromJson(brand)).toList();
+      final brands = json.decode(response.body) as List;
+
+      return brands.map((brand) => BrandModel.fromJson(brand)).toList();
+    } catch (_) {
+      rethrow;
+    }
   }
 
   Future<List<ModelModel>> getModels(String brandId) async {
-    http.Response response = await _httpClient
-        .get(Uri.https(baseUrl, '/fipe/api/v1/carros/marcas/$brandId/modelos'));
+    try {
+      http.Response response = await _httpClient.get(
+          Uri.https(baseUrl, '/fipe/api/v1/carros/marcas/$brandId/modelos'));
 
-    final models = json.decode(response.body)["modelos"] as List;
+      if (response.statusCode == 404) {
+        throw GetModelsNotFoundFailure();
+      }
 
-    return models.map((model) => ModelModel.fromJson(model)).toList();
+      if (response.statusCode != 200) {
+        throw GetModelsFailure();
+      }
+
+      final models = json.decode(response.body)["modelos"] as List;
+
+      return models.map((model) => ModelModel.fromJson(model)).toList();
+    } catch (_) {
+      rethrow;
+    }
   }
 
   Future<List<YearModel>> getYears(String brandId, String modelId) async {
-    http.Response response = await _httpClient.get(Uri.https(
-        baseUrl, '/fipe/api/v1/carros/marcas/$brandId/modelos/$modelId/anos'));
+    try {
+      http.Response response = await _httpClient.get(Uri.https(baseUrl,
+          '/fipe/api/v1/carros/marcas/$brandId/modelos/$modelId/anos'));
 
-    final years = json.decode(response.body) as List;
+      if (response.statusCode == 404) {
+        throw GetYearsNotFoundFailure();
+      }
 
-    return years.map((year) => YearModel.fromJson(year)).toList();
+      if (response.statusCode != 200) {
+        throw GetYearsFailure();
+      }
+
+      final years = json.decode(response.body) as List;
+
+      return years.map((year) => YearModel.fromJson(year)).toList();
+    } catch (_) {
+      rethrow;
+    }
   }
 
   Future<CarDataModel> getCarData(
       String brandId, String modelId, String yearId) async {
-    http.Response response = await _httpClient.get(Uri.https(baseUrl,
-        '/fipe/api/v1/carros/marcas/$brandId/modelos/$modelId/anos/$yearId'));
+    try {
+      http.Response response = await _httpClient.get(Uri.https(baseUrl,
+          '/fipe/api/v1/carros/marcas/$brandId/modelos/$modelId/anos/$yearId'));
 
-    final carData = json.decode(response.body) as Map<String, dynamic>;
+      if (response.statusCode == 404) {
+        throw GetCarDataNotFoundFailure();
+      }
 
-    return CarDataModel.fromJson(carData);
+      if (response.statusCode != 200) {
+        throw GetCarDataFailure();
+      }
+
+      final carData = json.decode(response.body) as Map<String, dynamic>;
+
+      return CarDataModel.fromJson(carData);
+    } catch (_) {
+      rethrow;
+    }
   }
 }
